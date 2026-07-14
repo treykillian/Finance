@@ -1,0 +1,8 @@
+
+/* Ledgerly v2 component refinements */
+:focus-visible { outline: 3px solid rgba(127, 208, 189, 0.75); outline-offset: 3px; }
+.install-action { display: none; }
+.can-install .install-action { display: inline-flex; }
+.privacy-mode .metric-value, .privacy-mode .amount { filter: blur(9px); }
+.validation-message { color: var(--bad); font-size: 0.84rem; margin-top: 6px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; scroll-behavior: auto !important; } }

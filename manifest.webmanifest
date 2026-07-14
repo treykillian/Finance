@@ -1,0 +1,65 @@
+{
+  "name": "Ledgerly v2 Money Dashboard",
+  "short_name": "Ledgerly",
+  "description": "A private, mobile-first personal finance PWA.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1013",
+  "theme_color": "#0f1013",
+  "categories": [
+    "finance",
+    "productivity"
+  ],
+  "shortcuts": [
+    {
+      "name": "Today",
+      "short_name": "Today",
+      "description": "Open today's money summary.",
+      "url": "./index.html#dashboard",
+      "icons": [{ "src": "icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Add Expense",
+      "short_name": "Expense",
+      "description": "Open Ledgerly to add an expense.",
+      "url": "./index.html#transactions",
+      "icons": [{ "src": "icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Add Income",
+      "short_name": "Income",
+      "description": "Open Ledgerly to add income.",
+      "url": "./index.html#transactions",
+      "icons": [{ "src": "icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "View Budget",
+      "short_name": "Budget",
+      "description": "Open the monthly budget.",
+      "url": "./index.html#budget",
+      "icons": [{ "src": "icons/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml" }]
+    }
+  ],
+  "icons": [
+    {
+      "src": "icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

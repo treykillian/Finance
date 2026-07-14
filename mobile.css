@@ -1,0 +1,4 @@
+
+/* Ledgerly v2 mobile-first shell */
+@media (max-width: 699px) { input, select, textarea { font-size: 16px; } button, .nav-button, .flow-launch, input, select { min-height: 44px; } .sheet-backdrop { padding-left: max(12px, env(safe-area-inset-left)); padding-right: max(12px, env(safe-area-inset-right)); } .storage-output { max-height: 48vh; } }
+@media (orientation: landscape) and (max-width: 900px) { main { padding-bottom: 92px; } .metric-value { font-size: 1.9rem; } }
