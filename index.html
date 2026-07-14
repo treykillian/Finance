@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Ledgerly Money Dashboard</title>
+  <meta name="description" content="A private, phone-friendly personal finance dashboard." />
+  <meta name="theme-color" content="#0f1013" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ledgerly" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="icons/icon-192.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.svg" />
+  <link rel="stylesheet" href="styles/base.css" />
+  <link rel="stylesheet" href="styles/components.css" />
+  <link rel="stylesheet" href="styles/mobile.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark">L</span>
+        <span>Ledgerly</span>
+      </div>
+      <nav aria-label="Primary">
+        <button class="nav-button active" data-view="dashboard">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13h8V3H3v10zM13 21h8V11h-8v10zM13 3v6h8V3h-8zM3 21h8v-6H3v6z"/></svg>
+          Today
+        </button>
+        <button class="nav-button" data-view="transactions">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h10"/><path d="M7 12h10"/><path d="M7 17h6"/><rect x="4" y="3" width="16" height="18" rx="3"/></svg>
+          Transactions
+        </button>
+        <button class="nav-button" data-view="budget">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5"/><path d="M9 19V9"/><path d="M14 19V3"/><path d="M19 19v-7"/></svg>
+          Budget
+        </button>
+        <button class="nav-button" data-view="planned">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>
+          Goals
+        </button>
+        <button class="nav-button" data-view="more">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
+          More
+        </button>
+      </nav>
+      <div class="sidebar-note">Private, local money dashboard.</div>
+    </aside>
+
+    <main>
+      <section id="dashboard" class="view active">
+        <article class="welcome-card">
+          <div>
+            <div class="metric-label">Welcome</div>
+            <h1 id="dashGreeting">Good day</h1>
+            <p id="dashDateTime" class="muted">Loading date and time...</p>
+          </div>
+        </article>
+
+        <div class="grid two-col" style="margin-top:14px">
+          <article class="panel today-panel">
+            <div class="panel-header">
+              <h2>Today</h2>
+              <button class="secondary" data-view-link="calendar">Calendar</button>
+            </div>
+            <div id="todaySummary" class="panel-body recommendations"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Safe to spend</h2>
+              <button class="secondary" data-view-link="safeSpend">Adjust</button>
+            </div>
+            <div id="safeSpendDashboard" class="panel-body"></div>
+          </article>
+        </div>
+
+        <div class="grid metric-grid" style="margin-top:14px">
+          <article class="metric highlight">
+            <div class="metric-label">Net worth</div>
+            <div id="dashNetWorth" class="metric-value">$0</div>
+            <div id="dashAccountNote" class="metric-note">Across 0 accounts</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Monthly income</div>
+            <div id="dashMonthlyIncome" class="metric-value">$0</div>
+            <div class="metric-note">This month's income</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Monthly expenses</div>
+            <div id="dashMonthlyExpenses" class="metric-value">$0</div>
+            <div class="metric-note">This month's expenses</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Income vs spending</div>
+            <div id="dashIncomeSpendingRatio" class="metric-value">0%</div>
+            <div id="dashIncomeSpendingNote" class="metric-note">$0 left over</div>
+          </article>
+        </div>
+
+        <div class="grid dashboard-split" style="margin-top:14px">
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Transaction history</h2>
+              <button class="secondary" data-view-link="transactions">Add</button>
+            </div>
+            <div id="dashboardTransactionHistory" class="panel-body list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Financial goals</h2>
+              <button class="secondary" data-view-link="planned">Manage</button>
+            </div>
+            <div id="dashboardGoalSummary" class="panel-body list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Upcoming planned expenses</h2>
+              <button class="secondary" data-view-link="planned">View all</button>
+            </div>
+            <div id="dashboardPlannedExpenses" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="safeSpend" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Safe to Spend</h1>
+            <p class="muted">Cash available after upcoming obligations, goals, planned expenses, and your required buffer.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Controls</h2></div>
+            <div class="panel-body">
+              <form id="safeSpendForm" class="form-grid" novalidate>
+                <label>Period
+                  <select name="period">
+                    <option value="today">Today</option>
+                    <option value="week">This week</option>
+                    <option value="paycheck">Until next paycheck</option>
+                    <option value="month">Rest of month</option>
+                  </select>
+                </label>
+                <label>Required cash buffer <input name="checkingBuffer" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+                <p class="muted full">Cash accounts are checking, cash, and savings-style asset accounts. Credit cards, loans, investment accounts, and liabilities are excluded.</p>
+                <div class="actions full"><button class="primary" type="submit">Save safe-to-spend settings</button></div>
+              </form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Breakdown</h2></div>
+            <div id="safeSpendBreakdown" class="panel-body recommendations"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="transactions" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Transactions</h1>
+            <p class="muted">Add money in or money out in one smooth flow.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Add transaction</h2></div>
+            <div class="panel-body">
+              <div class="guided-card">
+                <p>Choose what happened. Ledgerly will walk you through the rest.</p>
+                <div class="guided-actions">
+                  <button class="flow-launch" type="button" data-guided-flow="transaction-expense"><span><strong>Expense</strong>Money went out</span></button>
+                  <button class="flow-launch" type="button" data-guided-flow="transaction-income"><span><strong>Income</strong>Money came in</span></button>
+                  <button class="flow-launch" type="button" data-guided-flow="transaction-transfer"><span><strong>Transfer</strong>Move money between accounts</span></button>
+                </div>
+              </div>
+              <form id="transactionFlowForm" class="form-grid legacy-form" novalidate>
+                <div class="full step-strip">
+                  <span>1. Amount</span>
+                  <span>2. Type</span>
+                  <span>3. Account</span>
+                </div>
+                <label>Amount <input name="amount" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+                <label>Type
+                  <select name="type" id="transactionTypeSelect">
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
+                  </select>
+                </label>
+                <label class="full">What is it for? <input name="name" placeholder="Paycheck, groceries, rent, refund" /></label>
+                <label>Date <input name="date" type="date" /></label>
+                <label>Account <select name="accountId" id="transactionAccountSelect"></select></label>
+                <label class="full">Note <input name="notes" placeholder="Optional detail" /></label>
+                <div class="actions full">
+                  <button class="secondary" type="reset">Clear</button>
+                  <button class="primary" type="submit">Save transaction</button>
+                </div>
+              </form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <h2>History</h2>
+              <button id="exportCsvButton" class="secondary" type="button">Export CSV</button>
+            </div>
+            <div class="panel-body">
+              <div class="filter-bar">
+                <input id="transactionSearch" type="search" placeholder="Search transactions" aria-label="Search transactions" />
+                <select id="transactionTypeFilter" aria-label="Filter transaction type">
+                  <option value="">All types</option>
+                  <option value="income">Income</option>
+                  <option value="expense">Expense</option>
+                  <option value="transfer">Transfers</option>
+                </select>
+              </div>
+              <div id="transactionHistoryList" class="list"></div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="budget" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Budget</h1>
+            <p class="muted">Monthly category limits with simple warnings.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Add category limit</h2></div>
+            <div class="panel-body">
+              <form id="budgetForm" class="form-grid" novalidate>
+                <input type="hidden" name="editId" />
+                <label>Month <input name="month" type="month" /></label>
+                <label>Category <input name="category" list="categoryOptions" placeholder="Food, rent, transport" /></label>
+                <label>Limit <input name="limit" type="number" min="0" step="0.01" inputmode="decimal" placeholder="0.00" /></label>
+                <label>Classification
+                  <select name="classification">
+                    <option value="fixed">Fixed</option>
+                    <option value="flexible">Flexible</option>
+                    <option value="discretionary">Discretionary</option>
+                    <option value="savings">Savings</option>
+                  </select>
+                </label>
+                <datalist id="categoryOptions"></datalist>
+                <div class="actions full">
+                  <button class="secondary" type="reset">Clear</button>
+                  <button class="primary" type="submit">Save limit</button>
+                </div>
+              </form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>This month</h2></div>
+            <div id="budgetList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="networth" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Net Worth</h1>
+            <p class="muted">Calculated only from your account balances.</p>
+          </div>
+        </div>
+        <div class="grid metric-grid">
+          <article class="metric">
+            <div class="metric-label">Total assets</div>
+            <div id="totalAssets" class="metric-value">$0</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Total liabilities</div>
+            <div id="totalLiabilities" class="metric-value">$0</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Net worth</div>
+            <div id="netWorthTotal" class="metric-value">$0</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Accounts</div>
+            <div id="netWorthCount" class="metric-value">0</div>
+          </article>
+        </div>
+        <div class="grid two-col" style="margin-top:14px">
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Account mix</h2>
+              <button class="secondary" data-view-link="accounts">Manage accounts</button>
+            </div>
+            <div class="panel-body">
+              <div id="netWorthSummary" class="summary-strip"></div>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Accounts included</h2></div>
+            <div id="netWorthList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="accounts" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Accounts</h1>
+            <p class="muted">Where your money lives.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Add account</h2></div>
+            <div class="panel-body">
+              <div class="guided-card">
+                <p>Add where money lives with a short guided setup.</p>
+                <button class="flow-launch" type="button" data-guided-flow="account"><span><strong>New account</strong>Checking, savings, card, loan, or cash</span></button>
+              </div>
+              <form id="accountForm" class="form-grid legacy-form" novalidate>
+                <input type="hidden" name="editId" />
+                <label>Name <input name="name" placeholder="Checking, emergency savings, brokerage" /></label>
+                <label>Type
+                  <input name="accountType" id="accountTypeInput" list="accountTypeOptions" placeholder="Checking, credit card, HSA" />
+                  <datalist id="accountTypeOptions">
+                    <option value="Checking"></option>
+                    <option value="Emergency savings"></option>
+                    <option value="Investment"></option>
+                    <option value="Cash"></option>
+                    <option value="Credit card"></option>
+                    <option value="Loan"></option>
+                    <option value="HSA"></option>
+                    <option value="Crypto wallet"></option>
+                    <option value="Other"></option>
+                  </datalist>
+                </label>
+                <label>Status
+                  <select name="status">
+                    <option value="asset">Asset</option>
+                    <option value="liability">Liability</option>
+                  </select>
+                </label>
+                <label>Balance <input name="balance" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+                <label class="credit-card-field hidden">Credit limit <input name="creditLimit" type="number" min="0" step="0.01" placeholder="Credit cards only" /></label>
+                <label class="credit-card-field hidden">Due date <input name="dueDate" type="date" /></label>
+                <label class="credit-card-field hidden">Minimum payment <input name="minPayment" type="number" min="0" step="0.01" /></label>
+                <label class="credit-card-field hidden">Statement balance <input name="statementBalance" type="number" min="0" step="0.01" /></label>
+                <label class="full credit-card-field hidden">APR <input name="apr" type="number" min="0" step="0.01" placeholder="24.99" /></label>
+                <div class="actions full">
+                  <button class="secondary" type="reset">Clear</button>
+                  <button class="primary" type="submit">Save account</button>
+                </div>
+              </form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Current accounts</h2></div>
+            <div id="accountList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="income" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Income</h1>
+            <p class="muted">Recurring and one-time sources.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Add income source</h2></div>
+            <div class="panel-body">
+              <form id="incomeForm" class="form-grid" novalidate>
+                <input type="hidden" name="editId" />
+                <label>Date <input name="date" type="date" /></label>
+                <label>Source <input name="name" placeholder="Salary, freelance, dividends" /></label>
+                <label>Schedule
+                  <select name="frequency">
+                    <option value="monthly">Monthly</option>
+                    <option value="semimonthly">Twice monthly</option>
+                    <option value="biweekly">Every 2 weeks</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="one-time">One-time</option>
+                  </select>
+                </label>
+                <label>Amount per occurrence <input name="amount" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+                <label>Deposit to <select name="accountId" id="incomeAccountSelect"></select></label>
+                <label class="full">Notes <input name="notes" placeholder="Optional note" /></label>
+                <div class="actions full">
+                  <button class="secondary" type="reset">Clear</button>
+                  <button class="primary" type="submit">Save income</button>
+                </div>
+              </form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Income sources</h2></div>
+            <div id="incomeList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="expenses" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Expenses</h1>
+            <p class="muted">Log spending and choose where it was paid from.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Add expense</h2></div>
+            <div class="panel-body">
+              <form id="expenseForm" class="form-grid" novalidate>
+                <input type="hidden" name="editId" />
+                <label>Date <input name="date" type="date" /></label>
+                <label>Expense <input name="name" placeholder="Rent, utilities, groceries" /></label>
+                <label>Schedule
+                  <select name="frequency">
+                    <option value="monthly">Monthly</option>
+                    <option value="semimonthly">Twice monthly</option>
+                    <option value="biweekly">Every 2 weeks</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="one-time">One-time</option>
+                  </select>
+                </label>
+                <label>Amount per occurrence <input name="amount" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+                <label>Paid from <select name="accountId" id="expenseAccountSelect"></select></label>
+                <label class="full">Notes <input name="notes" placeholder="Optional note" /></label>
+                <div class="actions full">
+                  <button class="secondary" type="reset">Clear</button>
+                  <button class="primary" type="submit">Save expense</button>
+                </div>
+              </form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Expenses</h2></div>
+            <div id="expenseList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="savings" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Savings Ratio</h1>
+            <p class="muted">How much income stays with you.</p>
+          </div>
+        </div>
+        <div class="grid metric-grid">
+          <article class="metric highlight">
+            <div class="metric-label">Leftover money</div>
+            <div id="savingsLeftover" class="metric-value">$0</div>
+            <div class="metric-note">Income minus expenses</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Savings ratio</div>
+            <div id="savingsRatioPage" class="metric-value">0%</div>
+            <div class="metric-note">Leftover / income</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Recurring income</div>
+            <div id="recurringIncomeTotal" class="metric-value">$0</div>
+            <div class="metric-note">Expected monthly</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Recurring expenses</div>
+            <div id="recurringExpenseTotal" class="metric-value">$0</div>
+            <div class="metric-note">Expected monthly</div>
+          </article>
+        </div>
+        <div class="grid two-col" style="margin-top:14px">
+          <article class="panel">
+            <div class="panel-header"><h2>Leftover money plan</h2></div>
+            <div id="savingsRecommendationList" class="panel-body recommendations"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Recurring snapshot</h2></div>
+            <div class="panel-body">
+              <div class="summary-strip">
+                <div class="summary-item">
+                  <div class="metric-label">Expected net</div>
+                  <div id="expectedRecurringNet" class="row-title">$0</div>
+                </div>
+                <div class="summary-item">
+                  <div class="metric-label">Actual net</div>
+                  <div id="actualNetCash" class="row-title">$0</div>
+                </div>
+                <div class="summary-item">
+                  <div class="metric-label">Target</div>
+                  <div class="row-title">20%+</div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="aiPlan" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Financial Plan</h1>
+            <p class="muted">Rounded monthly moves for each account.</p>
+          </div>
+        </div>
+        <div class="grid metric-grid">
+          <article class="metric highlight">
+            <div class="metric-label">Monthly leftover</div>
+            <div id="aiAvailable" class="metric-value">$0</div>
+            <div class="metric-note">Income minus expenses</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Monthly payments</div>
+            <div id="aiPayments" class="metric-value">$0</div>
+            <div class="metric-note">Due dates and known costs</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Savings account</div>
+            <div id="aiSavings" class="metric-value">$0</div>
+            <div class="metric-note">Emergency and near-term cash</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Checking buffer</div>
+            <div id="aiChecking" class="metric-value">$0</div>
+            <div class="metric-note">Bill timing and cushion cash</div>
+          </article>
+          <article class="metric">
+            <div class="metric-label">Investing</div>
+            <div id="aiInvesting" class="metric-value">$0</div>
+            <div class="metric-note">Only after priority cash needs</div>
+          </article>
+        </div>
+        <div class="grid two-col" style="margin-top:14px">
+          <article class="panel">
+            <div class="panel-header"><h2>This month's account plan</h2></div>
+            <div id="aiAllocationList" class="panel-body list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Strategy rules</h2></div>
+            <div id="aiPlannerNotes" class="panel-body recommendations"></div>
+          </article>
+          <article class="panel full">
+            <div class="panel-header"><h2>Plan settings</h2></div>
+            <div class="panel-body">
+              <form id="planSettingsForm" class="form-grid" novalidate>
+                <label>Checking buffer <input name="checkingBuffer" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+                <label>Emergency fund months <input name="emergencyMonths" type="number" min="1" max="24" step="1" inputmode="numeric" /></label>
+                <label>Debt strategy
+                  <select name="debtStrategy">
+                    <option value="avalanche">Avalanche: highest APR first</option>
+                    <option value="snowball">Snowball: smallest balance first</option>
+                  </select>
+                </label>
+                <p class="muted full">Educational planning only. Ledgerly uses deterministic rules, not professional financial advice.</p>
+                <div class="actions full">
+                  <button class="primary" type="submit">Save plan settings</button>
+                </div>
+              </form>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="planned" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Goals</h1>
+            <p class="muted">Financial targets and upcoming expenses you are planning for.</p>
+          </div>
+        </div>
+        <div class="grid two-col goals-columns">
+          <div class="goal-column">
+            <article class="panel">
+              <div class="panel-header"><h2>Add financial goal</h2></div>
+              <div class="panel-body">
+                <div class="guided-card">
+                  <p>Create a target in a few calm steps.</p>
+                  <button class="flow-launch" type="button" data-guided-flow="goal"><span><strong>New financial goal</strong>Emergency fund, investing, or savings target</span></button>
+                </div>
+                <form id="goalForm" class="form-grid legacy-form" novalidate>
+                  <input type="hidden" name="editId" />
+                  <label>Goal <input name="name" placeholder="Emergency fund" /></label>
+                  <label>Target date <input name="targetDate" type="date" /></label>
+                  <label>Current amount <input name="current" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+                  <label>Target amount <input name="target" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+                  <label class="full">Linked account <select name="accountId" id="goalAccountSelect"></select></label>
+                  <div class="actions full">
+                    <button class="secondary" type="reset">Clear</button>
+                    <button class="primary" type="submit">Save goal</button>
+                  </div>
+                </form>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header"><h2>Financial goals</h2></div>
+              <div class="panel-body">
+                <div id="goalCategorySummary" class="compact-summary"></div>
+                <div class="saved-list-label">All financial goals</div>
+                <div id="goalList" class="list"></div>
+              </div>
+            </article>
+          </div>
+          <div class="goal-column">
+            <article class="panel">
+              <div class="panel-header"><h2>Add planned expense</h2></div>
+              <div class="panel-body">
+                <div class="guided-card">
+                  <p>Plan for a known cost without turning it into a goal.</p>
+                  <button class="flow-launch" type="button" data-guided-flow="planned-expense"><span><strong>New planned expense</strong>Upcoming bill, trip, car, or medical cost</span></button>
+                </div>
+                <form id="plannedExpenseForm" class="form-grid legacy-form" novalidate>
+                  <input type="hidden" name="editId" />
+                  <label>Name <input name="name" placeholder="Insurance premium, trip deposit" /></label>
+                  <label>Category <input name="category" placeholder="Travel, car, medical" /></label>
+                  <label>Total needed <input name="total" type="number" min="0" step="0.01" /></label>
+                  <label>Due date <input name="dueDate" type="date" /></label>
+                  <label>Current saved <input name="saved" type="number" min="0" step="0.01" /></label>
+                  <label>Linked account <select name="accountId" id="plannedAccountSelect"></select></label>
+                  <div class="actions full">
+                    <button class="secondary" type="reset">Clear</button>
+                    <button class="primary" type="submit">Save planned expense</button>
+                  </div>
+                </form>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header"><h2>Upcoming planned expenses</h2></div>
+              <div class="panel-body">
+                <div id="plannedCategorySummary" class="compact-summary"></div>
+                <div class="saved-list-label">All planned expenses</div>
+                <div id="plannedExpenseList" class="list"></div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="legacyGoals" class="view hidden" aria-hidden="true">
+        <div class="page-header">
+          <div>
+            <h1>Goals</h1>
+            <p class="muted">Targets you are saving toward.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Add savings goal</h2></div>
+            <div class="panel-body">
+              <form id="legacyGoalForm" class="form-grid" novalidate>
+                <input type="hidden" name="editId" />
+                <label>Goal <input name="name" placeholder="Emergency fund" /></label>
+                <label>Target date <input name="targetDate" type="date" /></label>
+                <label>Current amount <input name="current" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+                <label>Target amount <input name="target" type="number" min="0" step="0.01" placeholder="0.00" /></label>
+                <label class="full">Linked account <select name="accountId" id="legacyGoalAccountSelect"></select></label>
+                <div class="actions full">
+                  <button class="secondary" type="reset">Clear</button>
+                  <button class="primary" type="submit">Save goal</button>
+                </div>
+              </form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Savings goals</h2></div>
+            <div id="legacyGoalList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="data" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Data & backups</h1>
+            <p class="muted">Your records stay in this browser. Older storage is kept intact.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Backup tools</h2></div>
+            <div class="panel-body">
+              <div class="actions" style="justify-content:flex-start; margin-top:0">
+                <button class="primary" id="exportBackupButton" type="button">Export JSON</button>
+                <button class="secondary" id="importBackupButton" type="button">Import JSON</button>
+                <button class="secondary" id="createBackupButton" type="button">Create snapshot</button>
+                <button class="secondary" id="printStorageButton" type="button">Print storage</button>
+                <button class="secondary install-action" type="button" onclick="window.dispatchEvent(new CustomEvent('ledgerly-install-request'))">Install app</button>
+              </div>
+              <input class="hidden" id="importBackupInput" type="file" accept="application/json,.json" />
+              <p id="storageStatus" class="status-line" aria-live="polite"></p>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Storage status</h2></div>
+            <div id="storageSummary" class="panel-body summary-strip"></div>
+          </article>
+          <article class="panel full">
+            <div class="panel-header"><h2>All localStorage keys and values</h2></div>
+            <div class="panel-body"><pre id="storageInventory" class="storage-output"></pre></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="recurring" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Recurring</h1>
+            <p class="muted">Upcoming income and bills generated from repeating entries.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Upcoming</h2></div>
+            <div id="recurringPreviewList" class="panel-body list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Rules</h2></div>
+            <div id="recurringRuleList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="reports" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Reports</h1>
+            <p class="muted">Plain-language summaries with accessible bars.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Income vs spending</h2></div>
+            <div id="cashFlowReport" class="panel-body"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Spending by category</h2></div>
+            <div id="categoryReport" class="panel-body list"></div>
+          </article>
+          <article class="panel full">
+            <div class="panel-header"><h2>Forecast</h2></div>
+            <div id="forecastReport" class="panel-body recommendations"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="paycheck" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Paycheck Planning</h1>
+            <p class="muted">Assign expected income before it arrives.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>New paycheck plan</h2></div>
+            <div class="panel-body">
+              <form id="paycheckForm" class="form-grid" novalidate>
+                <input type="hidden" name="editId" />
+                <label>Name <input name="name" placeholder="Next paycheck" /></label>
+                <label>Expected date <input name="expectedDate" type="date" /></label>
+                <label>Expected amount <input name="expectedAmount" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+                <label>Income source <select name="incomeSourceId" id="paycheckIncomeSelect"></select></label>
+                <label>Bills amount <input name="bills" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+                <label>Goals amount <input name="goals" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+                <label>Debt/payment amount <input name="debt" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+                <label>Spending amount <input name="spending" type="number" min="0" step="0.01" inputmode="decimal" /></label>
+                <div class="actions full">
+                  <button class="secondary" type="reset">Clear</button>
+                  <button class="primary" type="submit">Save paycheck plan</button>
+                </div>
+              </form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Plans</h2></div>
+            <div id="paycheckPlanList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="calendar" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Calendar</h1>
+            <p class="muted">Paydays, bills, card due dates, goals, and planned expenses in one agenda.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Next 30 days</h2></div>
+            <div id="calendarAgenda" class="panel-body list"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>This month</h2></div>
+            <div id="calendarMonthSummary" class="panel-body recommendations"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="review" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Monthly Review</h1>
+            <p class="muted">A guided checklist for closing the month and planning the next one.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Review checklist</h2></div>
+            <div class="panel-body">
+              <form id="monthlyReviewForm" class="review-list" novalidate></form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Summary</h2></div>
+            <div id="monthlyReviewSummary" class="panel-body recommendations"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="trust" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Trust & Data Quality</h1>
+            <p class="muted">Storage health, calculation explanations, and fixable data issues.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Trust center</h2></div>
+            <div id="trustCenter" class="panel-body recommendations"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <h2>Data quality</h2>
+              <button id="repairDataQualityButton" class="secondary" type="button">Repair safe issues</button>
+            </div>
+            <div id="dataQualityList" class="panel-body list"></div>
+          </article>
+          <article class="panel full">
+            <div class="panel-header"><h2>Audit log</h2></div>
+            <div id="auditLogList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="settings" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Settings</h1>
+            <p class="muted">Personalize the local app and privacy controls.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Preferences</h2></div>
+            <div class="panel-body">
+              <form id="settingsForm" class="form-grid" novalidate>
+                <label>Name <input name="userName" placeholder="Trey" /></label>
+                <label>Currency <input name="currency" maxlength="3" placeholder="USD" /></label>
+                <label>Theme
+                  <select name="theme">
+                    <option value="system">System</option>
+                    <option value="light">Light</option>
+                    <option value="dark">Dark</option>
+                  </select>
+                </label>
+                <label>Privacy mode
+                  <select name="privacyMode">
+                    <option value="off">Show balances</option>
+                    <option value="on">Blur balances</option>
+                  </select>
+                </label>
+                <div class="actions full">
+                  <button class="primary" type="submit">Save settings</button>
+                </div>
+              </form>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Local data</h2></div>
+            <div class="panel-body recommendations">
+              <div class="recommendation"><strong>Stored on this device</strong><span class="muted">Ledgerly saves in versioned localStorage and mirrors to IndexedDB when available.</span></div>
+              <div class="recommendation"><strong>No cloud sync</strong><span class="muted">Cross-device sync needs a secure authenticated backend and is intentionally not faked here.</span></div>
+            </div>
+          </article>
+          <article class="panel full">
+            <div class="panel-header"><h2>App lock</h2></div>
+            <div class="panel-body">
+              <form id="securityForm" class="form-grid" novalidate>
+                <label>PIN <input name="pin" type="password" inputmode="numeric" autocomplete="new-password" placeholder="4+ digits" /></label>
+                <label>Auto-lock
+                  <select name="autoLockMinutes">
+                    <option value="1">After 1 minute</option>
+                    <option value="5">After 5 minutes</option>
+                    <option value="15">After 15 minutes</option>
+                    <option value="60">After 1 hour</option>
+                  </select>
+                </label>
+                <div class="actions full">
+                  <button class="primary" id="savePinButton" type="submit">Save PIN lock</button>
+                  <button class="secondary" id="lockNowButton" type="button">Lock now</button>
+                  <button class="danger" id="disablePinButton" type="button">Disable lock</button>
+                </div>
+                <p id="securityStatus" class="status-line full" aria-live="polite"></p>
+              </form>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="sync" class="view">
+        <div class="page-header">
+          <div>
+            <h1>Login & Sync</h1>
+            <p class="muted">Local app lock is available now. Real cloud sync requires a secure backend.</p>
+          </div>
+        </div>
+        <div class="grid two-col">
+          <article class="panel">
+            <div class="panel-header"><h2>Security status</h2></div>
+            <div id="syncSecurityStatus" class="panel-body recommendations"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-header"><h2>Cloud sync</h2></div>
+            <div id="syncBackendStatus" class="panel-body recommendations"></div>
+          </article>
+          <article class="panel full">
+            <div class="panel-header"><h2>Required before real sync</h2></div>
+            <div id="syncRequirementsList" class="panel-body list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="more" class="view">
+        <div class="page-header">
+          <div>
+            <h1>More</h1>
+            <p class="muted">Accounts, planning, reports, backups, and settings.</p>
+          </div>
+        </div>
+        <div class="more-grid">
+          <button class="more-tile" type="button" data-view-link="accounts"><strong>Accounts</strong><span>Balances and cards</span></button>
+          <button class="more-tile" type="button" data-view-link="income"><strong>Income</strong><span>Recurring and one-time</span></button>
+          <button class="more-tile" type="button" data-view-link="expenses"><strong>Expenses</strong><span>Monthly and one-time</span></button>
+          <button class="more-tile" type="button" data-view-link="aiPlan"><strong>Financial Plan</strong><span>Leftover money allocation</span></button>
+          <button class="more-tile" type="button" data-view-link="safeSpend"><strong>Safe to Spend</strong><span>Today, week, paycheck, month</span></button>
+          <button class="more-tile" type="button" data-view-link="paycheck"><strong>Paycheck Planning</strong><span>Assign income before it arrives</span></button>
+          <button class="more-tile" type="button" data-view-link="calendar"><strong>Calendar</strong><span>Paydays, bills, goals</span></button>
+          <button class="more-tile" type="button" data-view-link="review"><strong>Monthly Review</strong><span>Guided closeout</span></button>
+          <button class="more-tile" type="button" data-view-link="trust"><strong>Trust & Quality</strong><span>Storage, audit, diagnostics</span></button>
+          <button class="more-tile" type="button" data-view-link="recurring"><strong>Recurring</strong><span>Upcoming rules</span></button>
+          <button class="more-tile" type="button" data-view-link="reports"><strong>Reports</strong><span>Cash flow and trends</span></button>
+          <button class="more-tile" type="button" data-view-link="data"><strong>Data & backups</strong><span>Export, import, snapshots</span></button>
+          <button class="more-tile" type="button" data-view-link="settings"><strong>Settings</strong><span>Privacy and preferences</span></button>
+          <button class="more-tile" type="button" data-view-link="sync"><strong>Login & Sync</strong><span>PIN lock now, cloud sync later</span></button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <button id="quickAddButton" class="quick-add" type="button" aria-label="Add">+</button>
+  <div id="quickAddMenu" class="quick-add-menu" aria-hidden="true">
+    <button type="button" data-guided-flow="transaction-expense">Expense</button>
+    <button type="button" data-guided-flow="transaction-income">Income</button>
+    <button type="button" data-guided-flow="transaction-transfer">Transfer</button>
+    <button type="button" data-guided-flow="account">Account</button>
+    <button type="button" data-guided-flow="goal">Goal</button>
+    <button type="button" data-guided-flow="planned-expense">Planned expense</button>
+  </div>
+
+  <div id="guidedSheetBackdrop" class="sheet-backdrop" aria-hidden="true">
+    <section class="bottom-sheet" role="dialog" aria-modal="true" aria-labelledby="guidedSheetTitle">
+      <div class="sheet-grabber"></div>
+      <div class="sheet-content">
+        <div class="sheet-top">
+          <div id="guidedStepCount" class="sheet-count">Step 1</div>
+          <button id="guidedCloseButton" class="sheet-close" type="button" aria-label="Close">x</button>
+        </div>
+        <div id="guidedSheetBody"></div>
+      </div>
+    </section>
+  </div>
+
+  <div id="lockScreen" class="lock-screen hidden" aria-hidden="true">
+    <section class="lock-card" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+      <div class="brand-mark">L</div>
+      <h2 id="lockTitle">Unlock Ledgerly</h2>
+      <p class="muted">Enter your local app PIN. This protects this browser only.</p>
+      <form id="unlockForm" class="form-grid" novalidate>
+        <label class="full">PIN <input name="pin" type="password" inputmode="numeric" autocomplete="current-password" /></label>
+        <button class="primary full" type="submit">Unlock</button>
+        <p id="unlockStatus" class="status-line full" aria-live="polite"></p>
+      </form>
+    </section>
+  </div>
+
+  <script type="module" src="src/app.js"></script>
+</body>
+</html>
