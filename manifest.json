@@ -1,0 +1,26 @@
+{
+  "name": "Ledgerly Money Dashboard",
+  "short_name": "Ledgerly",
+  "description": "A private, phone-friendly personal finance dashboard.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0f1013",
+  "theme_color": "#0f1013",
+  "categories": ["finance", "productivity"],
+  "icons": [
+    {
+      "src": "icons/ledgerly-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/apple-touch-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
