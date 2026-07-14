@@ -1,0 +1,2 @@
+export const STORAGE_KEY = 'financeAppData_v13';
+export const LEGACY_STORAGE_KEYS = ['financeAppData_v12','financeAppData_v11','financeAppData_v10','financeAppData_v9','financeAppData_v8','financeAppData_v7','financeAppData_v6','financeAppData_v5','financeAppData_v4','financeAppData_v3','financeAppData_v2','financeAppData_v1','ledgerly.simple','ledgerly.simple.v4','ledgerly.simple.v3','ledgerly.simple.v2','ledgerly.simple.v1','ledgerly.finance.v2','ledgerly.finance.v1'];
