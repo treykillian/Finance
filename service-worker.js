@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ledgerly-v2-shell-v4';
+const CACHE_NAME = 'ledgerly-v2-shell-v5';
 const APP_SHELL = ['./','./index.html','./manifest.webmanifest','./styles/base.css','./styles/components.css','./styles/mobile.css','./src/app.js','./icons/icon-192.svg','./icons/icon-512.svg','./icons/apple-touch-icon.svg'];
 self.addEventListener('install', (event) => { event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', (event) => { event.waitUntil(caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))).then(() => self.clients.claim())); });

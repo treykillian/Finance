@@ -1318,6 +1318,9 @@
     function renderDashboard() {
       const c = calculations();
       const safe = safeToSpend();
+      const compactPhone = window.matchMedia("(max-width: 699px)").matches;
+      const transactionLimit = compactPhone ? 3 : 5;
+      const summaryLimit = compactPhone ? 2 : 4;
       updateClock();
       setText("dashNetWorth", money.format(c.netWorth));
       setText("dashAccountNote", `Across ${state.accounts.length} account${state.accounts.length === 1 ? "" : "s"}`);
@@ -1325,9 +1328,9 @@
       setText("dashMonthlyExpenses", money.format(c.monthlyExpenses));
       setText("dashIncomeSpendingRatio", pct.format(c.savingsRatio));
       setText("dashIncomeSpendingNote", `${money.format(c.leftover)} left over`);
-      document.getElementById("dashboardTransactionHistory").innerHTML = transactionRows(combinedTransactions().slice(0, 5));
-      document.getElementById("dashboardPlannedExpenses").innerHTML = plannedExpenseSummaryRows();
-      document.getElementById("dashboardGoalSummary").innerHTML = goalSummaryRows(newestEntries(state.goals).slice(0, 4));
+      document.getElementById("dashboardTransactionHistory").innerHTML = transactionRows(combinedTransactions().slice(0, transactionLimit));
+      document.getElementById("dashboardPlannedExpenses").innerHTML = plannedExpenseSummaryRows(summaryLimit);
+      document.getElementById("dashboardGoalSummary").innerHTML = goalSummaryRows(newestEntries(state.goals).slice(0, summaryLimit));
       document.getElementById("todaySummary").innerHTML = todaySummaryCards(c, safe);
       document.getElementById("safeSpendDashboard").innerHTML = safeSpendMini(safe);
     }
@@ -2000,9 +2003,9 @@
         .map(({ item }) => item);
     }
 
-    function plannedExpenseSummaryRows() {
+    function plannedExpenseSummaryRows(limit = 4) {
       const rows = orderedPlannedExpenses()
-        .slice(0, 4)
+        .slice(0, limit)
         .map((item) => {
           const remaining = Math.max(Number(item.total || 0) - Number(item.saved || 0), 0);
           const dueText = item.dueDate ? `Due ${item.dueDate}` : "No due date";
